@@ -1,5 +1,4 @@
 import os
-import math
 import argparse
 import torch
 import torch.nn as nn
@@ -7,17 +6,13 @@ import torch.optim as optim
 import torch.backends.cudnn as cudnn
 from PIL import Image
 import numpy as np
-from torch.autograd import Variable
-from torchvision.utils import save_image
-from torchvision import datasets
 from torch.utils.data import DataLoader
-from torchvision import utils
 from data.dataloader import ErasingData
 from loss.Loss import LossWithGAN_STE
 from models.Model import VGG16FeatureExtractor
 from models.sa_gan import STRnet2
 
-torch.set_num_threads(5)
+torch.set_num_threads(5)    #cpu并行计算度
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "3"    ### set the gpu as No....
 
@@ -38,9 +33,9 @@ parser.add_argument('--num_epochs', type=int, default=500, help='epochs')
 args = parser.parse_args()
 
 
-def visual(image):
-    im = image.transpose(1,2).transpose(2,3).detach().cpu().numpy()
-    Image.fromarray(im[0].astype(np.uint8)).show()
+# def visual(image):
+#     im = image.transpose(1,2).transpose(2,3).detach().cpu().numpy()
+#     Image.fromarray(im[0].astype(np.uint8)).show()
 
 
 cuda = torch.cuda.is_available()
@@ -50,11 +45,15 @@ if cuda:
     cudnn.benchmark = True
 
 batchSize = args.batchSize
+# 默认512，应该是处理的样本宽度
 loadSize = (args.loadSize, args.loadSize)
 
 if not os.path.exists(args.modelsSavePath):
     os.makedirs(args.modelsSavePath)
 
+'''
+    数据集路径
+'''
 dataRoot = args.dataRoot
 
 # import pdb;pdb.set_trace()

@@ -42,10 +42,17 @@ def ImageTransform(loadSize):
 class ErasingData(Dataset):
     def __init__(self, dataRoot, loadSize, training=True):
         super(ErasingData, self).__init__()
-        self.imageFiles = [join (dataRootK, files) for dataRootK, dn, filenames in walk(dataRoot) \
-            for files in filenames if CheckImageFile(files)]
+        '''
+            join()合并新的路径
+            返回值：
+                    第一个：当前访问的文件夹路径
+                    第二个：当前文件夹下的子目录list
+                    第三个：当前文件夹下的文件list
+        '''
+        self.imageFiles = [join(dataRootK, files) for dataRootK, dn, filenames in walk(dataRoot) \
+            for files in filenames if CheckImageFile(files)]            #默认没有子目录
         self.loadSize = loadSize
-        self.ImgTrans = ImageTransform(loadSize)
+        self.ImgTrans = ImageTransform(loadSize)    #对图片进行了两个操作，1.将图片大小进行转换 2.转为Tensor格式【C，H，W】， 【0，1.0】
         self.training = training
     
     def __getitem__(self, index):
