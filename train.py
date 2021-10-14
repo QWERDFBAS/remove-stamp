@@ -4,8 +4,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.backends.cudnn as cudnn
-from PIL import Image
-import numpy as np
 from torch.utils.data import DataLoader
 from data.dataloader import ErasingData
 from loss.Loss import LossWithGAN_STE
@@ -63,6 +61,7 @@ Erase_data = DataLoader(Erase_data, batch_size=batchSize,
 
 netG = STRnet2(3)
 
+# 加载预训练模型
 if args.pretrained != '':
     print('loaded ')
     netG.load_state_dict(torch.load(args.pretrained))
@@ -72,6 +71,7 @@ numOfGPUs = torch.cuda.device_count()
 if cuda:
     netG = netG.cuda()
     if numOfGPUs > 1:
+        #GPU并行计算
         netG = nn.DataParallel(netG, device_ids=range(numOfGPUs))
 
 count = 1

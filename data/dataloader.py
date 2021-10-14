@@ -54,8 +54,18 @@ class ErasingData(Dataset):
         self.loadSize = loadSize
         self.ImgTrans = ImageTransform(loadSize)    #对图片进行了两个操作，1.将图片大小进行转换 2.转为Tensor格式【C，H，W】， 【0，1.0】
         self.training = training
-    
+
+
+    '''
+        当用实例对象[xxxx]自动调用这个方法。
+    '''
     def __getitem__(self, index):
+        '''
+        数据集的形式:
+            三个文件夹， 1。all_images 对应原图像
+                       2.all_labels  对应去除印章后的图片
+                       3.mask        对应印章的图片
+        '''
         img = Image.open(self.imageFiles[index])
         mask = Image.open(self.imageFiles[index].replace('all_images','mask'))
         gt = Image.open(self.imageFiles[index].replace('all_images','all_labels'))
@@ -63,7 +73,9 @@ class ErasingData(Dataset):
         if self.training:
         # ### for data augmentation
             all_input = [img, mask, gt]
-            all_input = random_horizontal_flip(all_input)   
+            # 一定概率左右反转
+            all_input = random_horizontal_flip(all_input)
+            # 对图像一定概率随机旋转
             all_input = random_rotate(all_input)
             img = all_input[0]
             mask = all_input[1]
